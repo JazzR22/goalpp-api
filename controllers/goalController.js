@@ -12,7 +12,7 @@ exports.createGoal = async (req, res, next) => {
   }
 };
 
-exports.toggleDay = async (req, res, next) => {
+exports.toggleDay = async (req, res, next) => {  
   const { id: goalId } = req.params;
   const { day, completed } = req.body;
   const userId = req.user;

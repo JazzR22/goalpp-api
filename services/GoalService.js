@@ -64,14 +64,25 @@ class GoalService {
   }
 
   static async toggleDay(goalId, dayDate, completed, userId) {
+    dayDate = new Date(dayDate);
+
+    if (!(dayDate instanceof Date) || isNaN(dayDate)) {
+        throw ErrorFactory.invalidDates();
+    }
+    
     const goal = await this.#verifyAccess(goalId, userId);
     const dayNum = dayDate.getDate();
     const monthNum = dayDate.getMonth();
     const yearNum = dayDate.getFullYear();
 
     const month = goal.months.find(m => m.month === monthNum && m.year === yearNum);
+    if (!month) {
+      throw ErrorFactory.notFound(`Month not found: ${monthNum}/${yearNum}`);
+    }
     const day = month.days.find(d => d.day === dayNum);
-
+    if (!day) {
+      throw ErrorFactory.notFound(`Day ${dayNum} not found in goal ${goalId}`);
+    }
     day.completed = completed;
     month.completed = month.days.every(d => d.completed);
 
