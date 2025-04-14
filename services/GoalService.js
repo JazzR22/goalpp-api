@@ -1,6 +1,6 @@
 const GoalRepo = require('../repositories/GoalRepo');
 const ErrorFactory = require('../utils/ErrorFactory');
-const { buildGoalMonths, extendGoalMonths } = require('../utils/MonthsHelper');
+const { buildGoalMonths, extendGoalMonths } = require('../utils/MonthsHelper.js');
 
 class GoalService {
   static async createGoal({ userId, title, startDate, endDate }) {
