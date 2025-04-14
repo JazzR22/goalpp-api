@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const { signToken } = require('../utils/jwt');
+const ErrorFactory = require('../utils/ErrorFactory');
 
 const register = async (req, res, next) => {
   try {
@@ -7,12 +8,12 @@ const register = async (req, res, next) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'Email is already in use' });
+      throw ErrorFactory.userAlreadyExists(email);
     }
 
     const user = await User.create({ name, email, password });
-
     const token = signToken({ id: user._id });
+
     res.status(201).json({ token });
   } catch (err) {
     next(err);
@@ -24,8 +25,13 @@ const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select('+password');
-    if (!user || !(await user.comparePassword(password))) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    if (!user) {
+      throw ErrorFactory.userNotFound(email);
+    }
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      throw ErrorFactory.incorrectPassword();
     }
 
     const token = signToken({ id: user._id });

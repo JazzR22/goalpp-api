@@ -1,5 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const errorHandler = require('./middlewares/errorHandler');
+
+require('dotenv').config();
 
 const app = express();
 
@@ -12,5 +15,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/goals', require('./routes/goal'));
+
+app.use(errorHandler);
 
 module.exports = app;
