@@ -10,4 +10,7 @@ app.get('/', (req, res) => {
   res.send('API Goalpp working');
 });
 
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/goals', require('./routes/goal'));
+
 module.exports = app;
