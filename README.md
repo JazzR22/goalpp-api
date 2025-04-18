@@ -24,3 +24,9 @@ cp .env.example .env
 
 #### Start server
 npm run dev
+
+
+
+## License
+
+MIT © Jazmin S.R.
