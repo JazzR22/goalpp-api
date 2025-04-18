@@ -3,6 +3,7 @@ API for managing user goals with custom timeframes, habit tracking, and real-tim
 
 GoalPP is a RESTful Node.js API that allows users to register personal goals with monthly progress tracking. Each goal includes start/end dates, automatically generated monthly breakdowns, and per-day completion status. The app also supports secure user authentication via JWT.
 
+---
 ## Tech Stack
 - **Node.js** with **Express**
 - **MongoDB** via **Mongoose**
@@ -10,9 +11,10 @@ GoalPP is a RESTful Node.js API that allows users to register personal goals wit
 - Modular architecture (Controller / Service / Repository)
 - Custom error handling with `AppError` and `ErrorFactory`
 
+---
 ## Setup
 #### Clone the repo
-git clone https://github.com/your-username/goalpp-api.git
+git clone https://github.com/JazzR22/goalpp-api.git
 cd goalpp-api
 
 #### Install dependencies
@@ -25,7 +27,13 @@ cp .env.example .env
 #### Start server
 npm run dev
 
+---
 
+## Frontend Repo
+
+> [🔗 See frontend repo](https://github.com/JazzR22/goalpp-web) 
+
+---
 
 ## License
 
