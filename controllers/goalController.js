@@ -73,6 +73,17 @@ exports.extendGoalRange = async (req, res, next) => {
   }
 };
 
+exports.getTodayGoals = async (req, res, next) => {
+  const userId = req.user;
+
+  try {
+    const goals = await GoalService.getTodayGoals(userId);
+    res.json(goals);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // TODO
 // router.patch('/:id/title', goalController.updateTitle); // Rename goal
 // router.patch('/:id/end', goalController.markEnded); // Set goal as ended

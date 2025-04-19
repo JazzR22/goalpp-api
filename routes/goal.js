@@ -12,5 +12,6 @@ router.delete('/:id', goalController.deleteGoal);
 router.put('/:id/day', goalController.toggleDay);
 router.get('/:id/percentage', goalController.calculatePercentage);
 router.put('/:id/updateGoal', goalController.extendGoalRange);
+router.get('/today', goalController.getTodayGoals);
 
 module.exports = router;

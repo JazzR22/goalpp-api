@@ -102,6 +102,25 @@ class GoalService {
 
   static getUserGoals = (userId) => GoalRepo.findByUser(userId);
 
+  static async getTodayGoals(userId) {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth(); 
+    const year = today.getFullYear();
+  
+    const goals = await GoalRepo.findByUser(userId);
+  
+    const todaysGoals = goals.filter(goal => {
+      return goal.months.some(m =>
+        m.year === year &&
+        m.month === month &&
+        m.days.some(d => d.day === day)
+      );
+    });
+  
+    return todaysGoals;
+  }
+
   static async deleteGoal(goalId, userId) {
     await this.#verifyAccess(goalId, userId);
     await GoalRepo.delete(goalId);
