@@ -4,14 +4,14 @@ const ErrorFactory = require('../utils/ErrorFactory');
 
 const register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw ErrorFactory.userAlreadyExists(email);
     }
 
-    const user = await User.create({ name, email, password });
+    const user = await User.create({ email, password });
     const token = signToken({ id: user._id });
 
     res.status(201).json({ token });
