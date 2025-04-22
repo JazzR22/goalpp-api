@@ -3,7 +3,7 @@ const ErrorFactory = require('../utils/ErrorFactory');
 const { buildGoalMonths, extendGoalMonths } = require('../utils/MonthsHelper.js');
 
 class GoalService {
-  static async createGoal({ userId, title, startDate, endDate }) {
+  static async createGoal({ userId, title, startDate, endDate, target, description  }) {
     startDate = new Date(startDate);
     endDate = new Date(endDate);
     this.#normalizeDate(startDate, endDate);
@@ -34,6 +34,8 @@ class GoalService {
     return await GoalRepo.create({
       userId,
       title,
+      description,
+      target,
       startDate,
       endDate,
       completed: false,
