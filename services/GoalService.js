@@ -3,27 +3,28 @@ const ErrorFactory = require('../utils/ErrorFactory');
 const { buildGoalMonths, extendGoalMonths } = require('../utils/MonthsHelper.js');
 
 class GoalService {
-  static async createGoal({ userId, title, startDate, endDate, target, description  }) {
-    startDate = new Date(startDate);
-    endDate = new Date(endDate);
+  static async createGoal({ goal, userId }) {
+    const startDate = new Date(goal.startDate);
+    const endDate = new Date(goal.endDate);
     this.#normalizeDate(startDate, endDate);
 
     if (startDate > endDate) {
       throw ErrorFactory.invalidDates();
     }
 
+    // check conflict previous goals
     const goals = await GoalRepo.findByUser(userId);
     const conflict = goals.find(g =>
-      g.title === title &&
+      g.title === goal.title &&
       ((startDate >= g.startDate && startDate <= g.endDate) ||
-       (endDate >= g.startDate && endDate <= g.endDate))
+       (endDate >= g.startDate && endDate <= g.endDate) && !g.completed)
     );
 
     if (conflict) {
       const start = conflict.startDate;
       const end = conflict.endDate;
       throw ErrorFactory.duplicateGoalInRange(
-        title,
+        goal.title,
         `${start.getMonth() + 1}/${start.getFullYear()}`,
         `${end.getMonth() + 1}/${end.getFullYear()}`
       );
@@ -31,15 +32,17 @@ class GoalService {
 
     const months = buildGoalMonths(startDate, endDate);
 
+    console.log("2do titulo");
+    console.log(goal.title);
     return await GoalRepo.create({
       userId,
-      title,
-      description,
-      target,
+      title: goal.title.trim(),
       startDate,
       endDate,
+      target: goal.target,
       completed: false,
-      months
+      months,
+      ...(goal.description?.trim() && { description: goal.description.trim() })
     });
   }
 
