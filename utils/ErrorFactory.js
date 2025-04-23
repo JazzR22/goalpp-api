@@ -17,8 +17,11 @@ const ErrorFactory = {
   duplicateGoalInRange: (title, from, to) =>
     new AppError(`Goal "${title}" already exists from ${from} to ${to}`, 409, 'DUPLICATE_GOAL'),
 
-  invalidDates: () =>
-    new AppError('Invalid dates', 400, 'INVALID_DATE'),
+  invalidDates: (message) =>
+    new AppError(message, 400, 'INVALID_DATE'),
+  
+  missingFields: (message) =>
+      new AppError(message, 400, 'MISSING_FIELDS'),
 
   // Auth
 

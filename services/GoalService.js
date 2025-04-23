@@ -4,6 +4,7 @@ const { buildGoalMonths, extendGoalMonths } = require('../utils/MonthsHelper.js'
 
 class GoalService {
   static async createGoal({ goal, userId }) {
+    this.validateRequiredFields(goal)
     const startDate = new Date(goal.startDate);
     const endDate = new Date(goal.endDate);
     this.#normalizeDate(startDate, endDate);
@@ -142,6 +143,28 @@ class GoalService {
   static async #normalizeDate(...dates) {
     for (const d of dates) {
       d.setHours(0, 0, 0, 0);
+    }
+  }
+  
+  static validateRequiredFields(goal) {
+    if (!goal) throw ErrorFactory.missingFields('Goal data is missing');
+
+    const { title, startDate, endDate, target } = goal;
+
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      throw ErrorFactory.missingFields('Title is required');
+    }
+
+    if (!startDate || isNaN(new Date(startDate))) {
+      throw ErrorFactory.invalidDates('Start date is invalid');
+    }
+
+    if (!endDate || isNaN(new Date(endDate))) {
+      throw ErrorFactory.invalidDates('End date is invalid');
+    }
+
+    if (typeof target !== 'number' || isNaN(target)) {
+      throw ErrorFactory.missingFields('Target must be a number');
     }
   }
 }
