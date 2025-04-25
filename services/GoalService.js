@@ -46,6 +46,41 @@ class GoalService {
       ...(goal.description?.trim() && { description: goal.description.trim() })
     });
   }
+    
+  static async updateGoal (goalId, updates, userId){
+    const goal = await GoalRepo.findById(goalId)
+  
+    if (!goal) throw new Error('Goal not found')
+    if (goal.userId.toString() !== userId.toString()) {
+      throw new Error('Unauthorized to edit this goal')
+    }
+  
+    const allowedFields = ['title', 'description', 'endDate', 'target']
+  
+    for (const field of allowedFields) {
+      if (updates[field] !== undefined) {
+        const newValue = updates[field]
+        const currentValue = goal[field]
+  
+        if (field === 'endDate') {
+          const dateNew = new Date(newValue)
+          const dateCurrent = new Date(currentValue)
+          await GoalService.#normalizeDate(dateNew, dateCurrent)
+  
+          if (dateNew.getTime() !== dateCurrent.getTime()) {
+            goal.endDate = dateNew
+          }
+        } else {
+          if (newValue !== currentValue) {
+            goal[field] = newValue
+          }
+        }
+      }
+    }
+  
+    return await GoalRepo.save(goal)
+  }
+
 
   static async extendGoalRange(goalId, newEnd, userId) {
     newEnd = new Date(newEnd);

@@ -7,6 +7,7 @@ const goalController = require('../controllers/goalController');
 router.use(auth);
 
 router.post('/', goalController.createGoal);
+router.patch('/:id', goalController.updateGoal)
 router.get('/all', goalController.getUserGoals);
 router.delete('/:id', goalController.deleteGoal);
 router.put('/:id/day', goalController.toggleDay);

@@ -13,6 +13,21 @@ exports.createGoal = async (req, res, next) => {
   }
 };
 
+exports.updateGoal = async (req, res, next) => {
+  const { id: goalId } = req.params
+  const updates = req.body
+  const userId = req.user
+
+
+  console.log(req);
+  try {
+    const updatedGoal = await GoalService.updateGoal(goalId, updates, userId)
+    res.json({ goal: updatedGoal })
+  } catch (err) {
+    next(err)
+  }
+}
+
 exports.toggleDay = async (req, res, next) => {  
   const { id: goalId } = req.params;
   const { day, completed } = req.body;
