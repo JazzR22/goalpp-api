@@ -99,8 +99,3 @@ exports.getTodayGoals = async (req, res, next) => {
     next(err);
   }
 };
-
-// TODO
-// router.patch('/:id/title', goalController.updateTitle); // Rename goal
-// router.patch('/:id/end', goalController.markEnded); // Set goal as ended
-// View completion % and other stats

@@ -55,20 +55,20 @@ class GoalService {
       throw new Error('Unauthorized to edit this goal')
     }
   
-    const allowedFields = ['title', 'description', 'endDate', 'target']
+    const allowedFields = ['title', 'description', 'endDate', 'startDate', 'target']
   
     for (const field of allowedFields) {
       if (updates[field] !== undefined) {
         const newValue = updates[field]
         const currentValue = goal[field]
   
-        if (field === 'endDate') {
+        if (field === 'endDate' || field === 'startDate') {
           const dateNew = new Date(newValue)
           const dateCurrent = new Date(currentValue)
           await GoalService.#normalizeDate(dateNew, dateCurrent)
   
           if (dateNew.getTime() !== dateCurrent.getTime()) {
-            goal.endDate = dateNew
+            goal[field] = dateNew
           }
         } else {
           if (newValue !== currentValue) {
