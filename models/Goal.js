@@ -21,6 +21,7 @@ const GoalSchema = new Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   completed: { type: Boolean, default: false },
+  archived: { type: Boolean, default: false },
   months: { type: [MonthSchema], default: [] }
 }, { timestamps: true });
 

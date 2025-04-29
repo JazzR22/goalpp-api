@@ -42,6 +42,7 @@ class GoalService {
       endDate,
       target: goal.target,
       completed: false,
+      archived: false,
       months,
       ...(goal.description?.trim() && { description: goal.description.trim() })
     });
