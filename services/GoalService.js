@@ -56,7 +56,7 @@ class GoalService {
       throw new Error('Unauthorized to edit this goal')
     }
   
-    const allowedFields = ['title', 'description', 'endDate', 'startDate', 'target']
+    const allowedFields = ['title', 'description', 'endDate', 'startDate', 'target', 'completed', 'archived']
   
     for (const field of allowedFields) {
       if (updates[field] !== undefined) {
@@ -126,11 +126,6 @@ class GoalService {
       throw ErrorFactory.notFound(`Day ${dayNum} not found in goal ${goalId}`);
     }
     day.completed = completed;
-    month.completed = month.days.every(d => d.completed);
-
-    if (month.completed) {
-      goal.completed = goal.months.every(m => m.completed);
-    }
 
     await GoalRepo.save(goal);
     return goal;
