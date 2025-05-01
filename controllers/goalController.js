@@ -76,19 +76,6 @@ exports.deleteGoal = async (req, res, next) => {
   }
 };
 
-exports.extendGoalRange = async (req, res, next) => {
-  const { id: goalId } = req.params;
-  const { endDate } = req.body;
-  const userId = req.user;
-
-  try {
-    const result = await GoalService.extendGoalRange(goalId, endDate, userId);
-    res.json(result);
-  } catch (err) {
-    next(err);
-  }
-};
-
 exports.getTodayGoals = async (req, res, next) => {
   const userId = req.user;
 

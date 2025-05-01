@@ -83,4 +83,25 @@ const extendGoalMonths = (months, prevEndDate, newEndDate) => {
   }
 };
 
-module.exports = { buildGoalMonths, extendGoalMonths };
+const trimGoalMonths = (months, newEndDate) => {
+  const newYear = newEndDate.getFullYear();
+  const newMonth = newEndDate.getMonth();
+  const newDay = newEndDate.getDate();
+
+  while (
+    months.length &&
+    (months[months.length - 1].year > newYear ||
+      (months[months.length - 1].year === newYear &&
+        months[months.length - 1].month > newMonth))
+  ) {
+    months.pop();
+  }
+
+  if (months.length === 0) return;
+
+  const lastMonth = months[months.length - 1];
+
+  lastMonth.days = lastMonth.days.filter(d => d.day <= newDay);
+};
+
+module.exports = { buildGoalMonths, extendGoalMonths, trimGoalMonths };

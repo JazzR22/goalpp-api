@@ -1,6 +1,6 @@
 const GoalRepo = require('../repositories/GoalRepo');
 const ErrorFactory = require('../utils/ErrorFactory');
-const { buildGoalMonths, extendGoalMonths } = require('../utils/MonthsHelper.js');
+const { buildGoalMonths, extendGoalMonths, trimGoalMonths } = require('../utils/MonthsHelper.js');
 
 class GoalService {
   static async createGoal({ goal, userId }) {
@@ -33,8 +33,6 @@ class GoalService {
 
     const months = buildGoalMonths(startDate, endDate);
 
-    console.log("2do titulo");
-    console.log(goal.title);
     return await GoalRepo.create({
       userId,
       title: goal.title.trim(),
@@ -48,62 +46,44 @@ class GoalService {
     });
   }
     
-  static async updateGoal (goalId, updates, userId){
-    const goal = await GoalRepo.findById(goalId)
+  static async updateGoal(goalId, updates, userId) {
+    const goal = await GoalRepo.findById(goalId);
   
-    if (!goal) throw new Error('Goal not found')
+    if (!goal) throw new Error('Goal not found');
     if (goal.userId.toString() !== userId.toString()) {
-      throw new Error('Unauthorized to edit this goal')
+      throw new Error('Unauthorized to edit this goal');
     }
   
-    const allowedFields = ['title', 'description', 'endDate', 'startDate', 'target', 'completed', 'archived']
+    const allowedFields = ['title', 'description', 'endDate', 'target', 'completed', 'archived'];
+    const updatedFields = new Set();
   
     for (const field of allowedFields) {
-      if (updates[field] !== undefined) {
-        const newValue = updates[field]
-        const currentValue = goal[field]
+      const newValue = updates[field];
+      if (newValue === undefined) continue;
   
-        if (field === 'endDate' || field === 'startDate') {
-          const dateNew = new Date(newValue)
-          const dateCurrent = new Date(currentValue)
-          await GoalService.#normalizeDate(dateNew, dateCurrent)
+      if (field === 'endDate') {
+        const dateNew = new Date(newValue);
+        const dateCurrent = new Date(goal.endDate);
   
-          if (dateNew.getTime() !== dateCurrent.getTime()) {
-            goal[field] = dateNew
-          }
-        } else {
-          if (newValue !== currentValue) {
-            goal[field] = newValue
-          }
+        await GoalService.#normalizeDate(dateNew, dateCurrent);
+  
+        if (dateNew.getTime() > dateCurrent.getTime()) {
+          extendGoalMonths(goal.months, dateCurrent, dateNew);
+        } else if (dateNew.getTime() < dateCurrent.getTime()) {
+          trimGoalMonths(goal.months, dateNew);
+        }
+        goal.endDate = dateNew;
+        updatedFields.add('endDate');
+      } else {
+        if (newValue !== goal[field]) {
+          goal[field] = newValue;
+          updatedFields.add(field);
         }
       }
     }
   
-    return await GoalRepo.save(goal)
-  }
-
-
-  static async extendGoalRange(goalId, newEnd, userId) {
-    newEnd = new Date(newEnd);
-
-    if (!(newEnd instanceof Date)) {
-      throw ErrorFactory.invalidDates();
-    }
-
-    const today = new Date();
-    const goal = await this.#verifyAccess(goalId, userId);
-    this.#normalizeDate(newEnd, today, goal.endDate);
-
-    if (newEnd <= goal.endDate || newEnd <= today) {
-      throw ErrorFactory.invalidDates();
-    }
-
-    extendGoalMonths(goal.months, goal.endDate, newEnd);
-    goal.endDate = newEnd;
-
-    await GoalRepo.save(goal);
-    return { msg: 'Goal updated successfully' };
-  }
+    return GoalRepo.save(goal);
+  }  
 
   static async toggleDay(goalId, dayDate, completed, userId) {
     dayDate = new Date(dayDate);
