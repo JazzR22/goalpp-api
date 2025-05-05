@@ -12,6 +12,8 @@ const ErrorFactory = {
   incorrectPassword: () =>
     new AppError('Incorrect password', 400, 'INCORRECT_PASSWORD'),
 
+  emailNotVerified: (email) =>
+    new AppError(`Please, check your email to verify account`, 400, 'ACCOUNT_NOT_VERIFIED'),
   // Goals
 
   duplicateGoalInRange: (title, from, to) =>

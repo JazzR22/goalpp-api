@@ -12,9 +12,9 @@ module.exports = function (req, res, next) {
 
   try {
     const decoded = verifyToken(token);
-    req.user = decoded.id;
+    req.user = decoded;
     next();
   } catch (err) {
-    throw ErrorFactory.invalidToken();
+    return next(err)
   }
 };

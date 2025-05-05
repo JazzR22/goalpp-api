@@ -54,7 +54,7 @@ exports.calculatePercentage = async (req, res, next) => {
 };
 
 exports.getUserGoals = async (req, res, next) => {
-  const userId = req.user;
+  const userId = req.user.id;
 
   try {
     const goals = await GoalService.getUserGoals(userId);
